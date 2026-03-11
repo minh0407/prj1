@@ -4,8 +4,13 @@ import model.Order;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.logging.LogRecord;
 
 public class OrderDAO extends DBContext {
+
+    private static final Logger LOGGER = Logger.getLogger(OrderDAO.class.getName());
 
     // INSERT
     public int insertOrder(Order order) {
@@ -46,7 +51,7 @@ public class OrderDAO extends DBContext {
             }
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "Error inserting order", e);
         }
 
         return -1;
@@ -69,7 +74,7 @@ public class OrderDAO extends DBContext {
             }
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "Error retrieving all orders", e);
         }
 
         return list;
@@ -95,7 +100,10 @@ public class OrderDAO extends DBContext {
             }
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            LogRecord lr = new LogRecord(Level.SEVERE, "Error retrieving orders for user: {0}");
+            lr.setParameters(new Object[]{userId});
+            lr.setThrown(e);
+            LOGGER.log(lr);
         }
 
         return list;
@@ -120,7 +128,10 @@ public class OrderDAO extends DBContext {
             }
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            LogRecord lr = new LogRecord(Level.SEVERE, "Error retrieving order by id: {0}");
+            lr.setParameters(new Object[]{orderId});
+            lr.setThrown(e);
+            LOGGER.log(lr);
         }
 
         return null;
@@ -139,7 +150,10 @@ public class OrderDAO extends DBContext {
             return ps.executeUpdate() > 0;
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            LogRecord lr = new LogRecord(Level.SEVERE, "Error updating status for order: {0}");
+            lr.setParameters(new Object[]{orderId});
+            lr.setThrown(e);
+            LOGGER.log(lr);
         }
 
         return false;
@@ -158,7 +172,10 @@ public class OrderDAO extends DBContext {
             return ps.executeUpdate() > 0;
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            LogRecord lr = new LogRecord(Level.SEVERE, "Error updating payment status for order: {0}");
+            lr.setParameters(new Object[]{orderId});
+            lr.setThrown(e);
+            LOGGER.log(lr);
         }
 
         return false;
