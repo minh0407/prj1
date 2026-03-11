@@ -267,6 +267,8 @@ public class ProductDAO extends DBContext {
     }
 
     private Product extractProduct(ResultSet rs) throws Exception {
+        java.sql.Timestamp ts = rs.getTimestamp("createdDate");
+        java.time.LocalDateTime createdDate = ts != null ? ts.toLocalDateTime() : null;
         Product p = new Product(
                 rs.getInt("id"),
                 rs.getString("name"),
@@ -280,7 +282,7 @@ public class ProductDAO extends DBContext {
                 rs.getInt("warranty"),
                 rs.getBoolean("isFeatured"),
                 rs.getBoolean("status"),
-                rs.getTimestamp("createdDate"),
+                createdDate,
                 rs.getInt("categoryId"),
                 rs.getInt("brandId")
         );

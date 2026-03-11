@@ -6,7 +6,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.List;
 import model.Product;
 
@@ -72,7 +72,7 @@ public class AdminProductsServlet extends HttpServlet {
             Product p = new Product(0, name, slug, description,
                     price, stock, 0, image,
                     discount, warranty, isFeatured, true,
-                    new Date(), categoryId, brandId);
+                    LocalDateTime.now(), categoryId, brandId);
             dao.insert(p);
         } else {
             // UPDATE

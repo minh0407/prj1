@@ -88,7 +88,7 @@
                                             </span>
                                         </td>
                                         <td>
-                                            <fmt:formatDate value="${u.createdDate}" pattern="dd/MM/yyyy"/>
+                                            ${u.createdDateDisplay}
                                         </td>
                                         <td>
                                             <%-- Không cho khóa chính tài khoản admin đang đăng nhập --%>
