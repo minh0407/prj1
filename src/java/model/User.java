@@ -1,6 +1,7 @@
 package model;
 
-import java.util.Date;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 public class User {
 
@@ -13,14 +14,14 @@ public class User {
     private String avatar;
     private String role;
     private boolean status;
-    private Date createdDate;
+    private LocalDateTime createdDate;
 
     public User() {
     }
 
     public User(int id, String username, String password, String fullname,
             String email, String phone, String avatar,
-            String role, boolean status, Date createdDate) {
+            String role, boolean status, LocalDateTime createdDate) {
         this.id = id;
         this.username = username;
         this.password = password;
@@ -105,11 +106,16 @@ public class User {
         this.status = status;
     }
 
-    public Date getCreatedDate() {
+    public LocalDateTime getCreatedDate() {
         return createdDate;
     }
 
-    public void setCreatedDate(Date createdDate) {
+    public void setCreatedDate(LocalDateTime createdDate) {
         this.createdDate = createdDate;
+    }
+
+    public String getCreatedDateDisplay() {
+        if (createdDate == null) return "";
+        return createdDate.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
     }
 }

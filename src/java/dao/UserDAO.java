@@ -1,10 +1,15 @@
 package dao;
 
 import java.sql.*;
+import java.time.LocalDateTime;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import model.User;
 
 public class UserDAO extends DBContext {
+
+    private static final Logger LOGGER = Logger.getLogger(UserDAO.class.getName());
 
     /** Đăng nhập - mật khẩu MD5 */
     public User login(String username, String password) {
@@ -13,9 +18,10 @@ public class UserDAO extends DBContext {
              PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setString(1, username);
             ps.setString(2, password);
-            ResultSet rs = ps.executeQuery();
-            if (rs.next()) return extractUser(rs);
-        } catch (Exception e) { e.printStackTrace(); }
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) return extractUser(rs);
+            }
+        } catch (Exception e) { LOGGER.log(Level.SEVERE, "login error", e); }
         return null;
     }
 
@@ -31,7 +37,7 @@ public class UserDAO extends DBContext {
             ps.setString(5, user.getPhone());
             ps.setString(6, "user");
             return ps.executeUpdate() > 0;
-        } catch (Exception e) { e.printStackTrace(); }
+        } catch (Exception e) { LOGGER.log(Level.SEVERE, "register error", e); }
         return false;
     }
 
@@ -41,9 +47,10 @@ public class UserDAO extends DBContext {
         try (Connection con = getConnection();
              PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setString(1, username);
-            ResultSet rs = ps.executeQuery();
-            if (rs.next()) return rs.getInt(1) > 0;
-        } catch (Exception e) { e.printStackTrace(); }
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) return rs.getInt(1) > 0;
+            }
+        } catch (Exception e) { LOGGER.log(Level.SEVERE, "isUsernameExist error", e); }
         return false;
     }
 
@@ -53,9 +60,10 @@ public class UserDAO extends DBContext {
         try (Connection con = getConnection();
              PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setString(1, email);
-            ResultSet rs = ps.executeQuery();
-            if (rs.next()) return rs.getInt(1) > 0;
-        } catch (Exception e) { e.printStackTrace(); }
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) return rs.getInt(1) > 0;
+            }
+        } catch (Exception e) { LOGGER.log(Level.SEVERE, "isEmailExist error", e); }
         return false;
     }
 
@@ -68,7 +76,7 @@ public class UserDAO extends DBContext {
             ps.setInt(2, userId);
             ps.setString(3, oldPassword);
             return ps.executeUpdate() > 0;
-        } catch (Exception e) { e.printStackTrace(); }
+        } catch (Exception e) { LOGGER.log(Level.SEVERE, "changePassword error", e); }
         return false;
     }
 
@@ -79,9 +87,10 @@ public class UserDAO extends DBContext {
              PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setString(1, username);
             ps.setString(2, email);
-            ResultSet rs = ps.executeQuery();
-            if (rs.next()) return extractUser(rs);
-        } catch (Exception e) { e.printStackTrace(); }
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) return extractUser(rs);
+            }
+        } catch (Exception e) { LOGGER.log(Level.SEVERE, "checkUserByUsernameAndEmail error", e); }
         return null;
     }
 
@@ -93,7 +102,7 @@ public class UserDAO extends DBContext {
              PreparedStatement ps = con.prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) {
             while (rs.next()) list.add(extractUser(rs));
-        } catch (Exception e) { e.printStackTrace(); }
+        } catch (Exception e) { LOGGER.log(Level.SEVERE, "getAllUsers error", e); }
         return list;
     }
 
@@ -103,9 +112,10 @@ public class UserDAO extends DBContext {
         try (Connection con = getConnection();
              PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, id);
-            ResultSet rs = ps.executeQuery();
-            if (rs.next()) return extractUser(rs);
-        } catch (Exception e) { e.printStackTrace(); }
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) return extractUser(rs);
+            }
+        } catch (Exception e) { LOGGER.log(Level.SEVERE, "getUserById error", e); }
         return null;
     }
 
@@ -119,7 +129,7 @@ public class UserDAO extends DBContext {
             ps.setString(3, phone);
             ps.setInt(4, id);
             return ps.executeUpdate() > 0;
-        } catch (Exception e) { e.printStackTrace(); }
+        } catch (Exception e) { LOGGER.log(Level.SEVERE, "updateUser error", e); }
         return false;
     }
 
@@ -135,7 +145,7 @@ public class UserDAO extends DBContext {
             ps.setBoolean(5, u.isStatus());
             ps.setInt(6, u.getId());
             return ps.executeUpdate() > 0;
-        } catch (Exception e) { e.printStackTrace(); }
+        } catch (Exception e) { LOGGER.log(Level.SEVERE, "updateUserAdmin error", e); }
         return false;
     }
 
@@ -147,7 +157,7 @@ public class UserDAO extends DBContext {
             ps.setBoolean(1, !lock);   // lock=true → status=false (khóa)
             ps.setInt(2, id);
             return ps.executeUpdate() > 0;
-        } catch (Exception e) { e.printStackTrace(); }
+        } catch (Exception e) { LOGGER.log(Level.SEVERE, "lockUser error", e); }
         return false;
     }
 
@@ -158,7 +168,7 @@ public class UserDAO extends DBContext {
              PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, id);
             return ps.executeUpdate() > 0;
-        } catch (Exception e) { e.printStackTrace(); }
+        } catch (Exception e) { LOGGER.log(Level.SEVERE, "deleteUser error", e); }
         return false;
     }
 
@@ -169,7 +179,7 @@ public class UserDAO extends DBContext {
              PreparedStatement ps = con.prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) {
             if (rs.next()) return rs.getInt(1);
-        } catch (Exception e) { e.printStackTrace(); }
+        } catch (Exception e) { LOGGER.log(Level.SEVERE, "countAll error", e); }
         return 0;
     }
 
@@ -181,11 +191,13 @@ public class UserDAO extends DBContext {
             ps.setString(1, newPassword);
             ps.setInt(2, userId);
             return ps.executeUpdate() > 0;
-        } catch (Exception e) { e.printStackTrace(); }
+        } catch (Exception e) { LOGGER.log(Level.SEVERE, "resetPassword error", e); }
         return false;
     }
 
     private User extractUser(ResultSet rs) throws Exception {
+        Timestamp ts = rs.getTimestamp("createdDate");
+        LocalDateTime createdDate = ts != null ? ts.toLocalDateTime() : null;
         return new User(
                 rs.getInt("id"),
                 rs.getString("username"),
@@ -196,7 +208,7 @@ public class UserDAO extends DBContext {
                 rs.getString("avatar"),
                 rs.getString("role"),
                 rs.getBoolean("status"),
-                rs.getTimestamp("createdDate")
+                createdDate
         );
     }
 }

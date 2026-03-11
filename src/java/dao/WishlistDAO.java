@@ -2,9 +2,13 @@ package dao;
 
 import java.sql.*;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import model.Product;
 
 public class WishlistDAO extends DBContext {
+
+    private static final Logger LOGGER = Logger.getLogger(WishlistDAO.class.getName());
 
     /**
      * Lấy danh sách sản phẩm trong wishlist của user
@@ -21,30 +25,32 @@ public class WishlistDAO extends DBContext {
         try (Connection con = getConnection();
              PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, userId);
-            ResultSet rs = ps.executeQuery();
-            while (rs.next()) {
-                Product p = new Product();
-                p.setId(rs.getInt("id"));
-                p.setName(rs.getString("name"));
-                p.setSlug(rs.getString("slug"));
-                p.setDescription(rs.getString("description"));
-                p.setPrice(rs.getDouble("price"));
-                p.setStock(rs.getInt("stock"));
-                p.setSold(rs.getInt("sold"));
-                p.setImage(rs.getString("image"));
-                p.setDiscount(rs.getDouble("discount"));
-                p.setWarranty(rs.getInt("warranty"));
-                p.setIsFeatured(rs.getBoolean("isFeatured"));
-                p.setStatus(rs.getBoolean("status"));
-                p.setCreatedDate(rs.getDate("createdDate"));
-                p.setCategoryId(rs.getInt("categoryId"));
-                p.setBrandId(rs.getInt("brandId"));
-                p.setBrandName(rs.getString("brandName"));
-                p.setCategoryName(rs.getString("categoryName"));
-                list.add(p);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    Product p = new Product();
+                    p.setId(rs.getInt("id"));
+                    p.setName(rs.getString("name"));
+                    p.setSlug(rs.getString("slug"));
+                    p.setDescription(rs.getString("description"));
+                    p.setPrice(rs.getDouble("price"));
+                    p.setStock(rs.getInt("stock"));
+                    p.setSold(rs.getInt("sold"));
+                    p.setImage(rs.getString("image"));
+                    p.setDiscount(rs.getDouble("discount"));
+                    p.setWarranty(rs.getInt("warranty"));
+                    p.setIsFeatured(rs.getBoolean("isFeatured"));
+                    p.setStatus(rs.getBoolean("status"));
+                    java.sql.Timestamp ts = rs.getTimestamp("createdDate");
+                    p.setCreatedDate(ts != null ? ts.toLocalDateTime() : null);
+                    p.setCategoryId(rs.getInt("categoryId"));
+                    p.setBrandId(rs.getInt("brandId"));
+                    p.setBrandName(rs.getString("brandName"));
+                    p.setCategoryName(rs.getString("categoryName"));
+                    list.add(p);
+                }
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "getByUser error", e);
         }
         return list;
     }
@@ -58,10 +64,11 @@ public class WishlistDAO extends DBContext {
              PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, userId);
             ps.setInt(2, productId);
-            ResultSet rs = ps.executeQuery();
-            if (rs.next()) return rs.getInt(1) > 0;
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) return rs.getInt(1) > 0;
+            }
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "exists error", e);
         }
         return false;
     }
@@ -78,7 +85,7 @@ public class WishlistDAO extends DBContext {
             ps.setInt(2, productId);
             ps.executeUpdate();
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "add error", e);
         }
     }
 
@@ -93,7 +100,7 @@ public class WishlistDAO extends DBContext {
             ps.setInt(2, productId);
             ps.executeUpdate();
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "remove error", e);
         }
     }
 
@@ -105,10 +112,11 @@ public class WishlistDAO extends DBContext {
         try (Connection con = getConnection();
              PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, userId);
-            ResultSet rs = ps.executeQuery();
-            if (rs.next()) return rs.getInt(1);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) return rs.getInt(1);
+            }
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "countByUser error", e);
         }
         return 0;
     }

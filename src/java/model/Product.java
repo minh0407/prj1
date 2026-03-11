@@ -1,6 +1,6 @@
 package model;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 public class Product {
 
@@ -16,7 +16,7 @@ public class Product {
     private int warranty;
     private boolean isFeatured;
     private boolean status;
-    private Date createdDate;
+    private LocalDateTime createdDate;
     private int categoryId;
     private int brandId;
 
@@ -30,7 +30,7 @@ public class Product {
             double price, int stock, int sold, String image,
             double discount, int warranty,
             boolean isFeatured, boolean status,
-            Date createdDate, int categoryId, int brandId) {
+            LocalDateTime createdDate, int categoryId, int brandId) {
         this.id = id;
         this.name = name;
         this.slug = slug;
@@ -101,8 +101,8 @@ public class Product {
     public boolean isStatus()                   { return status; }
     public void setStatus(boolean status)       { this.status = status; }
 
-    public Date getCreatedDate()                { return createdDate; }
-    public void setCreatedDate(Date d)          { this.createdDate = d; }
+    public LocalDateTime getCreatedDate()                { return createdDate; }
+    public void setCreatedDate(LocalDateTime d)          { this.createdDate = d; }
 
     public int getCategoryId()                  { return categoryId; }
     public void setCategoryId(int categoryId)   { this.categoryId = categoryId; }

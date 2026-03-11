@@ -1,6 +1,6 @@
     package model;
 
-    import java.util.Date;
+    import java.time.LocalDateTime;
 
     public class Review {
 
@@ -11,11 +11,11 @@
         private int rating;
         private String comment;
         private boolean status;
-        private Date createdDate;
+        private LocalDateTime createdDate;
 
         public Review() {}
 
-        public Review(int id, int userId, int productId, Integer orderId, int rating, String comment, boolean status, Date createdDate) {
+        public Review(int id, int userId, int productId, Integer orderId, int rating, String comment, boolean status, LocalDateTime createdDate) {
             this.id = id;
             this.userId = userId;
             this.productId = productId;
@@ -82,11 +82,11 @@
             this.status = status;
         }
 
-        public Date getCreatedDate() {
+        public LocalDateTime getCreatedDate() {
             return createdDate;
         }
 
-        public void setCreatedDate(Date createdDate) {
+        public void setCreatedDate(LocalDateTime createdDate) {
             this.createdDate = createdDate;
         }
 
